@@ -9,7 +9,7 @@ import Apollo
 /// from the broadcast... at least on this implementation.
 @available(iOS 13, *)
 public struct GraphQLSubscriptionPublisher<Subscription: GraphQLSubscription>: Publisher {
-    public typealias Output = Optional<Subscription.Data>
+    public typealias Output = GraphQLResult<Subscription.Data>
     public typealias Failure = Error
 
     private let client: ApolloClient
@@ -20,7 +20,7 @@ public struct GraphQLSubscriptionPublisher<Subscription: GraphQLSubscription>: P
         self.subscription = subscription
     }
 
-    public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Error, S.Input == Optional<Subscription.Data> {
+    public func receive<S>(subscriber: S) where S : Subscriber, S.Failure == Error, S.Input == GraphQLResult<Subscription.Data> {
         let subscription = GraphQLSubscriptionSubscription(client: self.client, subscription: self.subscription, subscriber: subscriber)
         subscriber.receive(subscription: subscription)
     }

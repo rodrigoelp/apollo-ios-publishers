@@ -14,11 +14,10 @@ extension ApolloClient {
     /// - Returns: A Future publisher containing the result of the query.
     @available(iOS 13, *)
     public func fetchPublisher<Query: GraphQLQuery>(query: Query,
-                                             cachePolicy: CachePolicy = .returnCacheDataElseFetch,
-                                             context: UnsafeMutableRawPointer? = nil) -> Future<GraphQLResult<Query.Data>, Error> {
-        return Future { [weak self] completion in
-            self?.fetch(query: query, cachePolicy: cachePolicy, context: context) { result in completion(result) }
-        }
+                                                    cachePolicy: CachePolicy = .returnCacheDataElseFetch,
+                                                    context: UnsafeMutableRawPointer? = nil)
+        -> GraphQLQueryPublisher<Query> {
+            return GraphQLQueryPublisher(client: self, query: query, cachePolicy: cachePolicy, context: context)
     }
 
     /// Performs a mutation by sending it to the server.
@@ -29,10 +28,9 @@ extension ApolloClient {
     /// - Returns: A future publisher with the result of the mutation.
     @available(iOS 13, *)
     public func performPublisher<Mutation: GraphQLMutation>(mutation: Mutation,
-                                                            context: UnsafeMutableRawPointer? = nil) -> Future<GraphQLResult<Mutation.Data>, Error> {
-        return Future { [weak self] completion in
-            self?.perform(mutation: mutation, context: context) { result in completion(result) }
-        }
+                                                            context: UnsafeMutableRawPointer? = nil)
+        -> GraphQLMutationPublisher<Mutation> {
+            return GraphQLMutationPublisher(client: self, mutation: mutation, context: context)
     }
 
     /// Creates a subscription to the given subscription model.
@@ -41,12 +39,32 @@ extension ApolloClient {
     ///   - subscription: The subscription to subscribe to.
     /// - Returns: A subscription publisher, subscribed to the server. Disposing this publisher causes the subscription to be terminated.
     @available(iOS 13, *)
-    public func subscribePublisher<Subscription: GraphQLSubscription>(subscription: Subscription) -> GraphQLSubscriptionPublisher<Subscription> {
-        return publisher(for: subscription)
+    public func subscribePublisher<Subscription: GraphQLSubscription>(subscription: Subscription)
+        -> GraphQLSubscriptionPublisher<Subscription> {
+            return publisher(for: subscription)
     }
 
+    /// Creates a subscription to the given subscription model.
+    ///
+    /// - Parameters:
+    ///   - subscription: The subscription to subscribe to.
+    /// - Returns: A subscription publisher, subscribed to the server. Disposing this publisher causes the subscription to be terminated.
     @available(iOS 13, *)
-    public func publisher<Subscription: GraphQLSubscription>(for subscription: Subscription) -> GraphQLSubscriptionPublisher<Subscription> {
-        return GraphQLSubscriptionPublisher(client: self, subscription: subscription)
+    public func publisher<Subscription: GraphQLSubscription>(for subscription: Subscription)
+        -> GraphQLSubscriptionPublisher<Subscription> {
+            return GraphQLSubscriptionPublisher(client: self, subscription: subscription)
+    }
+
+    /// Performs file upload to a GraphQL endpoint.
+    ///
+    /// - Parameters:
+    ///   - upload: Upload operation against which the upload occurs.
+    ///   - files: Set of files to upload.
+    ///   - context: [optional] A context to use for the cache to work with results. Should default to nil.
+    /// - Returns: A publisher with the results of the upload operations.
+    @available(iOS 13, *)
+    public func uploadPublisher<UploadOperation: GraphQLOperation>(upload: UploadOperation, files: [GraphQLFile], context: UnsafeMutableRawPointer? = nil)
+        -> GraphQLUploadPublisher<UploadOperation> {
+            return GraphQLUploadPublisher(client: self, operation: upload, files: files, context: context)
     }
 }

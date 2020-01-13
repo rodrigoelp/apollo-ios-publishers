@@ -6,7 +6,6 @@ import Apollo
 
 @available(iOS 13, *)
 extension Publisher {
-
     @available(iOS 13, *)
     public func asPureResult<T>() -> AnyPublisher<T, Failure> where Output == GraphQLResult<T>, Failure == Error {
         return self.flatMap({ result -> Future<T, Failure> in

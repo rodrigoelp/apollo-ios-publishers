@@ -6,8 +6,8 @@ import Apollo
 
 ///
 @available(iOS 13, *)
-public final class GraphQLSubscriptionSubscription<SubscriberType: Subscriber, GraphSubscription: GraphQLSubscription>: Subscription
-where SubscriberType.Input == Optional<GraphSubscription.Data>, SubscriberType.Failure == Error {
+public final class GraphQLSubscriptionSubscription<GraphSubscription: GraphQLSubscription, SubscriberType: Subscriber>: Subscription
+where SubscriberType.Input == GraphQLResult<GraphSubscription.Data>, SubscriberType.Failure == Error {
 
     private var subscriber: SubscriberType?
     private var cancellable: Apollo.Cancellable? = nil
@@ -33,10 +33,8 @@ where SubscriberType.Input == Optional<GraphSubscription.Data>, SubscriberType.F
     private func handle(result: Result<GraphQLResult<GraphSubscription.Data>, Error>) {
         switch result {
             case .success(let resultSet):
-                print("Results!")
-                _ = subscriber?.receive(resultSet.data)
+                _ = subscriber?.receive(resultSet)
             case .failure(let e):
-                print("Errors!")
                 subscriber?.receive(completion: Subscribers.Completion<Error>.failure(e))
                 subscriber?.receive(completion: .finished)
         }
