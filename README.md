@@ -4,6 +4,19 @@ Apollo iOS is a strongly-typed, caching GraphQL client for iOS exposed as publis
 
 It allows you to execute queries, mutations and subscriptions against a GraphQL Server whilst maintaining a pure observable approach.
 
+## Swift Package Installation
+
+1. Open your xcode project/workspace
+2. In your project navigator, click over your project
+3. With the project selected, click on `Swift Packages`
+4. Click the `+` button
+5. When prompted for an git url provide the following: `https://github.com/rodrigoelp/apollo-ios-publishers.git`
+6. Next, you will need to provide either the release version a branch. Versions will be available in the github repo and I will be publishing most changes directly to `master` and major releases to a branch called `stable`. If you want to keep up to date, you can choose to go with the `stable` branch (not recommended for a CI environment).
+7. Next, you will choose which targets you want this package (and apollo) to be included in.
+8. And that is all, finish that up. xcode will start fetching the source code and setting up your project.
+
+This package has specified its dependencies with the apollo client, so you don't have to specify it as it will include it by default.
+
 ## How to use it?
 
 Let's assume you the following schema:
